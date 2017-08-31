@@ -1,0 +1,473 @@
+系统变量：  _itemsperline editor
+
+compress（"a.il" "b.il");压缩a文件输出b文件到你的工作目录下。
+encrypt("a.il" "b.il"  "xxx");xxx是密码可选项。同样输出是b文件到你的工作目录下，但是你这时候打开b文件确会发现是乱码了，如果加了xxx密码，这样你在load的时候必须也把xxx加上才可以load。
+关于没有加上密码的encrypt文件我们可以通过compress来解密，。解出来的文件可读性不是很强，因为很多操作符没了，换行也没了，读起来比较困难，加了密码的文件，目前还不知道怎么可以进行解密。
+
+变量定义：
+lineCount = 4     => 4
+lineCount         => 4
+type( lineCount ) => fixnum   （type命令返回参数的类型）
+lineCount = "abc" => "abc"
+lineCount => "abc"
+type( lineCount ) => string
+
+调用函数的形式：
+strcat( "Mary" " had" " a" " little" " lamb" )   或
+( strcat "Mary" " had" " a" " little" " lamb" )  或
+strcat "Mary" " had" " a" " little" " lamb"
+
+若少打栝号可采用以下方法:
+1. Type a closing right bracket ( ] ) character. This character closes all outstanding right
+parentheses.  （] 可关闭所有栝号）
+2. If you still don’t get a response, type a double quote (") character followed by a right
+bracket ( ] ) character (在]后再加一个")
+
+不要在调用的函数的参数的左边加空格
+Do not put any space between the function name and the left parenthesis.
+
+列表的定义：
+List Explanation
+(1 2 3)        A list containing the integer constants 1, 2, and 3
+(1)            A list containing the single element 1
+( )            An empty list (same as the special atom nil)
+(1 (2 3) 4)    A list containing another list as its second element
+
+shapeTypeList = '( "rect" "polygon" "rect" "line" )
+shapeTypeList => ( "rect" "polygon" "rect" "line" )
+
+'( 1 2 3 )   =>  ( 1 2 3 )
+a = 1        =>  1
+b = 2        =>  2
+list( a b 3 ) => ( 1 2 3 )
+
+为列表增加元素： 命令 cons
+result = '( 2 3 )                => ( 2 3 )
+result = cons( 1 result )        => ( 1 2 3 )
+cons 要求第二个参数是列表，即该命令只能在列表最前面添加元素，要在最后增加元素可用list
+
+合并两个列表：  命令 append
+oneList = '( 4 5 6 ) => ( 4 5 6 )
+aList = '( 1 2 3 ) => ( 1 2 3 )
+bList = append( oneList aList) => ( 4 5 6 1 2 3 )
+
+car返回列表的第一个元素：
+numbers = '( 1 2 3 )          => ( 1 2 3 )
+car( numbers )                => 1
+cdr返回除列表第一个元素以外的所有元素所组成的列表：
+numbers = '( 1 2 3 )          => ( 1 2 3 )
+cdr( numbers )                => ( 2 3 )
+nth返回指定位置的元素： 索引从 0 开始
+numbers = '( 1 2 3 )          => ( 1 2 3 )
+nth( 1 numbers )              => 2
+menber查询数据是否在一个列表内： 在则返回该元素及以后的元素
+numbers = '( 1 2 3 )          => ( 1 2 3 )
+member( 4 numbers )           => nil
+member( 2 numbers )           => ( 2 3 )
+length查询列表的长度：
+numbers = '( 1 2 3 )          => ( 1 2 3 )
+length( numbers )             => 3
+
+二维变量：
+定义：
+xValue = 300
+yValue = 400
+aCoordinate = xValue:yValue     => ( 300 400 )
+读取： 命令 xCoord   yCoord
+xCoord( aCoordinate ) => 300
+yCoord( aCoordinate ) => 400
+你可以用' 或 list命令构建 二维变量
+You can use the single quote (') operator or list function to build a coordinate list.
+你可以用car获取x变量，用car( cdr (...)) 获取y变量
+You can use the car function to access the x-coordinate and
+car( cdr ( ... ) ) to access the y-coordinate.
+
+矩形变量：
+bBox = list( 300:400 500:450 )
+lowerLeft = 300:400
+upperRight = 500:450
+bBox = list( lowerLeft upperRight )
+bBox = '(( 300 400 ) ( 500 450 ))
+
+Functions            Meaning                 Example                     Expression
+car                 car( ... )            lower left corner           || = car( bBox)
+cadr              car( cdr( ... ) )       upper right corner          ur = cadr( bBox)
+caar              car( car( ... ) )     x-coord of lower left corner  llx = caar( bBox)
+cadar        car( cdr( car( ... ) ) )   y-coord of lower left corner  lly = cadar( bBox)
+caadr         car( car( cdr( ... ) ) )  x-coord of upper right corner urx = caadr( bBox)
+cadadr        car( cdr( car( cdr( ...]  y-coord of upper right corner ury = cadadr( bBox)
+
+输出:
+print    打印
+println  打印，另起一行
+printf   格式化
+printf(
+	"\n%-15s %-15s %-10d %-10d %-10d %-10d"
+	layerName purpose
+	rectCount labelCount lineCount miscCount
+	)
+%[-][width][.precision]conversion_code
+	[-] = left justify
+	[width] = minimum number of character positions
+	[.precision] = number of characters to be printed
+	conversion_code
+		d - decimal(integer)
+		f - floating point
+		s - string or symbol
+		c - character
+		n - numeric
+		L - list (Ignores width and precision fields.)
+		P - point list (Ignores width and precision fields.)
+		B - Bounding box list (Ignores width and precision.)
+输出到文件：
+myPort = outfile( "/tmp/myFile" )
+for( i 1 3
+println( list( "Number:" i) myPort )
+)
+close( myPort )
+writes this data to the file /tmp/myFile.
+("Number:" 1)
+("Number:" 2)
+("Number:" 3)
+如果文件不存在或没有权限，outfile返回 nil
+printf不接受管道参数，如需指定管道可用fprintf
+myPort = outfile( "/tmp/myFile" )
+for( i 1 3
+fprintf( myPort "Number: %d\n" i )
+)
+close( myPort )
+Number: 1
+Number: 2
+Number: 3
+
+读取文件：
+inPort = infile( "~/.cshrc" )
+when( inPort
+while( gets( nextLine inPort )
+println( nextLine )
+)
+close( inPort )
+)
+
+fscanf以格式化方式读取文件，以下例子输出每一个单词
+inPort = infile( "~/.cshrc" )
+when( inPort
+while( fscanf( inPort "%s" word )
+println( word )
+)
+close( inPort )
+)
+
+Format Specification        Data Type          Scans Input Port
+%d                           integer            for next integer
+%f                       floating point for    next floating point
+%s                         text string          for next text string
+
+
+
+控制结构命令：
+if : 语法： if( ... then ... else ... ).  if后不要有空格
+if( shapeType == "rect"
+	then
+		println( "Shape is a rectangle" )
+		++rectCount
+	else
+		println( "Shape is not a rectangle" )
+		++miscCount
+	)
+
+when：
+when( shapeType == "rect"
+	println( "Shape is a rectangle" )
+	++rectCount
+	) ; when
+
+unless：
+unless( shapeType == "rect" || shapeType == "line"
+	println( "Shape is miscellaneous" )
+	++miscCount
+	) ; unless
+
+case：
+case( shapeType
+( "rect"
+	++rectCount
+	println( "Shape is a rectangle" )
+	)
+( "line"
+	++lineCount
+	println( "Shape is a line" )
+	)
+( "label"
+	++labelCount
+	println( "Shape is a label" )
+	)
+( t
+	++miscCount
+	println( "Shape is miscellaneous" )
+	)
+) ; case
+如果一个分支的变量是列表，skill会搜索整个列表，若有匹配，则执行该分支
+
+for循环：
+sum = 0
+for( i 1 5
+	sum = sum + i
+	println( sum )
+	)
+=> t
+for总是返回t
+
+foreach循环：
+rectCount = lineCount = polygonCount = 0
+shapeTypeList = '( "rect" "polygon" "rect" "line" )
+foreach( shapeType shapeTypeList
+	case( shapeType
+	( "rect" ++rectCount )
+	( "line" ++lineCount )
+	( "polygon" ++polygonCount )
+	( t ++miscCount )
+	) ;case
+) ; foreach
+=> ( "rect" "polygon" "rect" "line" )
+
+自定义函数：
+procedure( ComputeBBoxHeight( bBox )
+	ll = car( bBox )
+	ur = cadr( bBox )
+	lly = yCoord( ll )
+	ury = yCoord( ur )
+	ury - lly
+	) ; procedure
+bBox = list( 100:150 250:400)
+bBoxHeight = ComputeBBoxHeight( bBox )
+
+在skill中启动编辑器：
+editor = "xterm -e vi"
+ed( "myFile.il")
+
+注释的两种方法：
+/* This is a block of (C style) comments
+comment line 2
+comment line 3 etc.
+*/
+
+x = 1 ; comment following a statement
+; comment line 1
+; comment line 2 and so forth
+
+超级栝号：
+f1( f2( f3( f4( x ) ) ) )
+can also be written as
+f1( f2( f3( f4( x ]
+
+符号引用：
+y = 1
+‘(x y z) => (x y z)
+‘(x ,y z) => (x 1 z)
+
+x = 1
+y = '(a b c)
+‘(,x ,y z) => (1 (a b c) z)
+‘(,x ,@y z) => (1 a b c z)
+
+命令换行符 \
+string = "This is \
+a test."
+=> "This is a test."
+
+特殊引用：
+new-line (line feed) \n
+horizontal tab \t
+vertical tab \v
+backspace \b
+carriage return \r
+form feed \f
+backslash \\
+double quote \”
+ASCII code ddd (octal) \ddd
+
+lambda：定义一个没有名字的函数：
+trAddWithMessageFun = lambda( ( x y )
+printf( "Adding %d and %d ... %d \n" x y x+y )
+x+y
+) => funobj:0x1814b90
+You can subsequently pass a function object to the apply function
+together with an argument list. For example:
+apply( trAddWithMessageFun '( 4 5 ) ) => 9
+
+nprocedure：注销一个函数
+
+如果在函数的第一行是一行文本，则该行为声明：
+In SKILL, when the first expression is a text string, it is a comment:
+procedure( functionName( )
+"Concise abstract statement for publication."
+...
+) ; procedure
+For example:
+procedure( trPlus( x y )
+"Returns the sum of x & y"
+x+y
+)
+
+取消函数的写保护： （默认为写保护）
+sstatus( writeProtect nil )
+
+字符串操作：
+大小写转换：
+upperCase：
+upperCase("Hello world!") => "HELLO WORLD!"
+symName = "nameofasymbol" => "nameofasymbol"
+upperCase(symName) => "NAMEOFASYMBOL"
+lowerCase：
+lowerCase("Hello World!") => "hello world!"
+将列表创建一个字符变量： buildString 默认链接符是 空格
+buildString( '("test" "il") ".") => "test.il"
+buildString( '("usr" "mnt") "/") => "usr/mnt"
+buildString( '("a" "b" "c")) => "a b c"
+buildString( '("a" "b" "c") "") => "abc"
+将多个参数变成一个字符变量： strcat
+strcat( "l" "ab" "ef" ) => "labef"
+strcat( "a" "b" "c" "d" ) => "abcd"
+strcat( "a " "b " "c " "d " ) => "a b c d "
+通过指定数字来控制连接长度
+strncat( "abcd" "efghi" 2) => "abcdef"
+strncat( "abcd" "efghijk" 5) => "abcdefghi"
+字符比较（排序）： alphalessp
+stringList = '( "xyz" "abc" "ghi" )
+sort( stringList 'alphalessp ) => ("abc" "ghi" "xyz")
+字符比较 ： strcmp
+1 string1 is alphabetically greater than string2.
+0 string1 is alphabetically equal to string2.
+-1 string1 is alphabetically less than string2.
+strcmp( "abc" "abb" )=> 1
+strcmp( "abc" "abc")=> 0
+strcmp( "abc" "abd")=> -1
+字符比较 ： alphaNumCmp  可通过定义数字来控制比较的字符的长度
+1 arg1 is alphanumerically greater than arg2.
+0 arg1 is alphanumerically identical to arg2.
+-1 arg2 is alphanumerically greater than arg1.
+alphaNumCmp( "a" "b" ) =>-1
+alphaNumCmp( "b" "a" ) => 1
+alphaNumCmp( "name12" "name12" ) => 0
+alphaNumCmp( "name23" "name12" ) => 1
+alphaNumCmp( "00.09" "9.0E-2" t) => 0
+得到字符串的长度： strlen
+strlen( "abc" ) => 3
+strlen( "\007" )=> 1
+得到指定索引的字符串中的字符： getchar  （第一个索引为 1）
+getchar("abc" 2) => b
+getchar("abc" 4) => nil
+得到指定字符第一次出现及该字符以后的字符： index
+index( "abc" 'b ) => "bc"
+index( "abcdabce" "dab" ) => "dabce"
+index( "abc" "cba" ) => nil
+index( "dandelion" "d") => "dandelion"
+得到指定字符最后一次出现及该字符以后的字符： rindex
+rindex( "dandelion" "d") => "delion"
+得到指定字符的索引值： nindex  （第一个索引为 1）
+nindex( "abc" 'b ) => 2
+nindex( "abcdabce" "dab" ) => 4
+nindex( "abc" "cba" ) => nil
+得到指定区间的字符 substring   第一个参数为索引值，第二个为新字符的长度）
+substring("abcdef" 2 4)=> "bcde"
+substring("abcdef" 4 2)=> "de"
+分割字符： parseString  空格是默认分割符
+parseString( "Now is the time" ) => ("Now" "is" "the" "time")
+parseString( "prepend" "e" ) => ("pr" "p" "nd" )
+parseString( "~/exp/test.il" "./") => ("~" "exp" "test" "il")
+匹配：
+rexMatchp
+rexMatchp("[0-9]*[.][0-9][0-9]*" "100.001") => t
+rexMatchp("[0-9]*[.][0-9]+" ".001") => t
+rexMatchp("[0-9]*[.][0-9]+" ".") => nil
+rexMatchp("[0-9]*[.][0-9][0-9]*" "10.") => nil
+rexMatchp("[0-9" "100")
+=> *Error* rexMatchp: Missing ] - "[0-9"
+rexCompile
+rexCompile("^[a-zA-Z]+") => t
+rexCompile("\\([a-z]+\\)\\.\\1") => t
+rexCompile("^\\([a-z]*\\)\\1$") => t
+rexCompile("[ab") => *Error* rexCompile: Missing ] - "[ab"
+
+array：数组
+declare(a[10])
+a[0] = 1
+a[1] = 2.0
+a[2] = a[0] + a[1]
+b = a
+d[0] = b
+d[0][2]   ==>>> 等同于 a[2]   【变量传递】
+
+table： （hash） 数组
+makeTable
+myTable = makeTable("atable1" 0) => table:atable1
+tablep(myTable) => t
+myTable[1] = "blue" => "blue"
+myTable["two"] = '(r e d) => (r e d)
+myTable["three"] = 'green => green
+length(myTable) => 3
+foreach, forall, and setof 可以搜索表格
+foreach, foreach mapcar  To execute a collection of SKILL expressions for each key/
+value pair in a table
+setof function  	To return a list of keys in a table that satisfy a criterion.
+length function 	To return the number of key/value pairs in a table
+remove function 	To remove a key from a table
+测试一个变量是不是表格： tablep
+myTable = makeTable("atable1" 0) => table:atable1
+tablep(myTable) => t
+tablep(9) => nil
+将表格写入文件： writeTable
+writeTable("inventory.log" myTable) => t
+从文件读取表格： readTable
+readTable("inventory.log" myTable)=> t
+表格打印： printstruct  常用于debug
+printstruct(myTable)
+=> 	1: "blue"
+	"three": green
+	"two": (r e d)
+遍历表格： foreach  forall
+foreach( key myTable
+	println(
+	list( key myTable[ key ] )
+	)
+)
+--------------------------------
+forall( key myTable
+	stringp(key) && fixp(myTable[key])
+	)
+---------------------------------
+exists( key myTable
+stringp(key) && fixp(myTable[key])
+)
+
+数学逻辑函数：
+add1(n) n + 1
+sub1(n) n – 1
+abs(n) Absolute value of n
+exp(n) e raised to the power n
+log(n) Natural logarithm of n
+max(n1 n2 ...) Maximum of the given arguments
+min(n1 n2 ...) Minimum of the given arguments
+mod(x1 x2) x1 modulo x2, that is, the integer remainder of dividing x1
+by x2
+round(n) Integer whose value is closest to n
+sqrt(n) Square root of n
+sxtd(x w) Sign-extends the rightmost w bits of x, that is, the bit field
+x<w-1:0> with x<w-1> as the sign bit
+zxtd(x w) Zero-extends the rightmost w bits of x, executes faster
+than doing x<w-1:0>
+sin(n) sine, argument n is in radians
+cos(n) cosine
+tan(n) tangent
+asin(n) arc sine, result is in radians
+acos(n) arc cosine
+atan(n) arc tangent
+random(x) Returns a random integer between 0 and x-1. If random is
+called with no arguments, it returns an integer that has all
+of its bits randomly set.
+srandom(x) Sets the initial state of the random number generator to x
+
+
+
+P139
